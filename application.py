@@ -87,7 +87,7 @@ def send_message_back(user_id):
     data = {"recipient": {"id": user_id}, "message": message}
 
     requests.post("https://graph.facebook.com/v2.6/me/messages",
-        params={"access_token", access_token},
+        params={"access_token": access_token},
         json=data)
 
 def get_link():
