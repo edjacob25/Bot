@@ -4,6 +4,7 @@ from logging.config import dictConfig
 import configparser
 import os
 import requests
+import traceback
 
 def configure_logging():
     if not os.path.exists("logs/default.log"):
@@ -68,7 +69,10 @@ def messages():
                 send_message_back(item["messaging"][0]["sender"]["id"])
             except Exception as e:
                 app.logger.info("Could not send message")
-                app.logger.info(e)
+                app.logger.error(e)
+                app.logger.error(traceback.format_exc())
+
+            app.logger.info(item)
             app.logger.info(item["messaging"][0])
 
         return "EVENT_RECEIVED"
@@ -82,7 +86,7 @@ def send_message_back(user_id):
     message = "Por el momento solo te devuelvo la foto del perrito del dia, que es {}".format(get_link())
     data = {"recipient": {"id": user_id}, "message": message}
 
-    requests.post("https://graph.facebook.com/v2.6/me/messages", 
+    requests.post("https://graph.facebook.com/v2.6/me/messages",
         params={"access_token", access_token},
         json=data)
 
