@@ -1,12 +1,45 @@
 from flask import Flask, request, abort
+from flask.logging import default_handler
+from logging.config import dictConfig
 import configparser
+import os
 import requests
 
-app = Flask(__name__)
+def configure_logging():
+    if not os.path.exists("logs/default.log"):
+        os.mkdir("logs")
 
+    dictConfig({
+        'version': 1,
+        'formatters': {'default': {
+            'format': '[%(asctime)s] %(levelname)s in %(module)s: %(message)s',
+        }},
+        'handlers': {
+            'wsgi': {
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://flask.logging.wsgi_errors_stream',
+                'formatter': 'default'
+            },
+            'files': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': 'logs/default.log',
+                'formatter': 'default'
+            }
+        },
+        'root': {
+            'level': 'INFO',
+            'handlers': ['wsgi', 'files']
+        }
+    })
+
+configure_logging()
+
+app = Flask(__name__)
+app.logger.removeHandler(default_handler)
 
 @app.route("/")
 def hello():
+    app.logger.info("Hello there")
     return get_link()
 
 @app.route("/webhook")
@@ -31,11 +64,10 @@ def messages():
     all = request.json
     if all["object"] == "page":
         for item in all["entry"]:
-            print(item["messaging"][0])
+            app.logger.info(item["messaging"][0])
         return "EVENT_RECEIVED"
     else:
         abort(404)
-
 
 def get_link():
     r = requests.post("https://www.reddit.com/api/v1/access_token",

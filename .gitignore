@@ -105,3 +105,9 @@ venv.bak/
 
 # Vs Code
 .vscode/
+
+# logs
+logs/
+
+# Environment
+vars.ini
