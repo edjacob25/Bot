@@ -66,8 +66,9 @@ def messages():
         for item in all["entry"]:
             try:
                 send_message_back(item["messaging"][0]["sender"]["id"])
-            except:
+            except Exception as e:
                 app.logger.info("Could not send message")
+                app.logger.info(e)
             app.logger.info(item["messaging"][0])
 
         return "EVENT_RECEIVED"
