@@ -64,10 +64,23 @@ def messages():
     all = request.json
     if all["object"] == "page":
         for item in all["entry"]:
+            send_message_back(item["sender"]["id"])
             app.logger.info(item["messaging"][0])
+
         return "EVENT_RECEIVED"
     else:
         abort(404)
+
+def send_message_back(user_id):
+    config = configparser.ConfigParser()
+    config.read('vars.ini')
+    access_token = config["Tokens"]["access_token_page"]
+    message = "Por el momento solo te devuelvo la foto del perrito del dia, que es {}".format(get_link)
+    data = {{"recipient": {"id": user_id}}, {"message": message}}
+
+    requests.post("https://graph.facebook.com/v2.6/me/messages", 
+        params={"access_token", access_token},
+        json=data)
 
 def get_link():
     r = requests.post("https://www.reddit.com/api/v1/access_token",
