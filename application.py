@@ -64,7 +64,10 @@ def messages():
     all = request.json
     if all["object"] == "page":
         for item in all["entry"]:
-            send_message_back(item["sender"]["id"])
+            try:
+                send_message_back(item["messaging"][0]["sender"]["id"])
+            except:
+                app.logger.info("Could not send message")
             app.logger.info(item["messaging"][0])
 
         return "EVENT_RECEIVED"
