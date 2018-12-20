@@ -1,0 +1,5 @@
+wheel
+requests
+flask
+pylint
+uwsgi
