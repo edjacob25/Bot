@@ -86,7 +86,7 @@ def send_message_back(user_id):
     message = {"text": "Por el momento solo te devuelvo la foto del perrito del dia, que es {}".format(get_link())}
     data = {"recipient": {"id": user_id}, "message": message}
 
-    requests.post("https://graph.facebook.com/v3.2/me/messages",
+    requests.post("https://graph.facebook.com/v10.0/me/messages",
         params={"access_token": access_token},
         json=data)
 
